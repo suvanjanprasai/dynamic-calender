@@ -1,8 +1,8 @@
 from flask import Flask,render_template, request
-import finished.CustomCalender as CustomCalender
+import CustomCalender
 import datetime
 
-app = Flask(__name__, template_folder="test",static_folder="css")
+app = Flask(__name__, template_folder="html")
 
 
 
@@ -29,6 +29,6 @@ def home():
 
 @app.route("/submit", methods=["GET"])
 def submit():
-
     return request.args
+    
 app.run("127.0.0.1",port=4001)
