@@ -1,1 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Kanit:300,700" rel="stylesheet">
+    
+    <style>
+        body {
+            width: 10%;
+            background-color: lightgray;
+            font-family: "Space Mono", monospace;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .calendar-base {
+            width: 900px;
+            height: 500px;
+            border-radius: 20px;
+            background-color: white;
+            position: relative;
+            z-index: -1;
+            color: black;
+        }
+
+        .year {
+            color: #E8E8E8;
+            font-size: 30px;
+            float: right;
+            position: relative;
+            right: 75px;
+            top: 20px;
+            font-weight: bold;
+        }
+
+        .triangle-left {
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-right: 10px solid #E8E8E8;
+            border-bottom: 5px solid transparent;
+            float: right;
+            position: relative;
+            right: 90px;
+            top: 36px;
+        }
+
+        .triangle-right {
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-left: 10px solid #E8E8E8;
+            border-bottom: 5px solid transparent;
+            float: right;
+            position: relative;
+            left: 20px;
+            top: 36px;
+        }
+
+        .triangle-left:hover {
+            border-right: 10px solid#2ECC71;
+        }
+
+        .triangle-right:hover {
+            border-left: 10px solid#2ECC71;
+        }
+
+        .month-line {
+            border-color: #E8E8E8;
+            position: relative;
+            top: 85px;
+            width: 57%;
+            left: 178px;
+        }
+
+        .days {
+            color: #AAAAAA;
+            position: relative;
+            font-size: 18px;
+            left: 365px;
+            top: 80px;
+            word-spacing: 30px;
+            font-weight: 600;
+        }
+
+        .num-dates {
+            float: right;
+            position: relative;
+            top: 110px;
+            right: 195px;
+            z-index: 1;
+        }
+
+        .first-week {
+            margin-bottom: 25px;
+            word-spacing: 27.1px;
+            left: 147px;
+            position: relative;
+        }
+
+        .second-week {
+            margin-bottom: 25px;
+            word-spacing: 25.1px;
+            left: 147px;
+            position: relative;
+        }
+
+        .third-week {
+            margin-bottom: 25px;
+            word-spacing: 25.1px;
+            left: 147px;
+            position: relative;
+        }
+
+        .fourth-week {
+            margin-bottom: 25px;
+            word-spacing: 25.1px;
+            left: 147px;
+            position: relative;
+        }
+
+        .fifth-week {
+            margin-bottom: 25px;
+            position: relative;
+            word-spacing: 25.1px;
+            left: 147px;
+        }
+
+        .sixth-week {
+            margin-bottom: 25px;
+            word-spacing: 25.1px;
+            left: 147px;
+            position: relative;
+        }
+
+        .active-day {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #2ECC71;
+        }
+
+
+
+
+
+        .two {
+            position: relative;
+            top: 168px;
+            left: 535px;
+        }
+
+
+        .calendar-left {
+            width: 300px;
+            height: 500px;
+            border-radius: 20px 0px 0px 20px;
+            background-color: #1d9bf0;
+            position: relative;
+            z-index: -1;
+            bottom: 500px;
+            color: rgb(247, 247, 247);
+        }
+
+
+
+        .num-date {
+            font-weight: 700;
+            position: relative;
+            top: 10%;
+            left: 7%;
+        }
+
+        .day {
+            width: 50%;
+            margin: 0px auto;
+            font-size: 30px;
+            position: relative;
+            top: 5%;
+            bottom: 60px;
+        }
+
+        .months {
+            position: relative;
+            left: 335px;
+            top: 90px;
+            word-spacing: -10px;
+        }
+
+        .btnmonths {
+            padding: 1px;
+            background: none;
+            border: none;
+            color: #696969;
+            font-size: 13px;
+            font-weight: 600;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            border-radius: 20px;
+        }
+
+        .btnmonths:hover {
+            color: #1d9bf0 !important;
+            cursor: pointer;
+        }
+
+        .active {
+            background-color: #2aa9fffc;
+            color: rgb(255, 255, 255);
+        }
+
+        .disabled-hover {
+            pointer-events: none;
+        }
+
+        #bigMonth {
+            font-size: 85px;
+        }
+
+        #smallMonth {
+            font-size: 85px;
+        }
+    </style>
+
+    <script>
+
+
+        function showMonth(month, button, shortform) {
+            var targetElement = document.getElementById("bigMonth");
+            targetElement.textContent = shortform;
+            // Hide all months
+            var months = document.getElementsByClassName('num-dates');
+            for (var i = 0; i < months.length; i++) {
+                months[i].style.display = 'none';
+            }
+            // Show selected month
+            document.getElementById(month).style.display = 'block';
+
+            // Remove 'active' class from all buttons
+            var buttons = document.getElementsByTagName('button');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+                buttons[i].classList.remove('disabled-hover');
+            }
+            // Add 'active' class to clicked button
+            button.classList.add('active');
+            button.classList.add('disabled-hover');
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var currentDate = new Date(); // Get current date
+            var month = currentDate.toLocaleString('default', { month: 'short' }); // Get short form of month name
+            var day = currentDate.getDate(); // Get day of the month
+            var dayName = currentDate.toLocaleString('default', { weekday: 'long' }); // Get full day name
+            var year = currentDate.getFullYear(); // Get year
+
+            dayName = dayName.split('').map(char => char.toUpperCase()).join('');
+
+            document.getElementById('bigMonth').textContent = month;
+            document.getElementById('year').textContent = year;
+            document.getElementById('dayName').textContent = dayName;
+            document.getElementById('smallMonth').textContent = day;
+
+            var monthNames = ["january", "february", "march", "april", "may", "june",
+                "july", "august", "september", "october", "november", "december"];
+
+            var currentMonthName = monthNames[currentDate.getMonth()];
+
+            var element1 = document.getElementById(currentMonthName);
+            element1.style.display = 'block';
+
+            var element2 = document.getElementById(month);
+            element2.classList.add('active', 'disabled-hover');
+
+            modifiedMonth = month.toLowerCase();
+            let numberString = day.toString();
+
+
+            if (numberString.length === 1) {
+                numberString = '0' + numberString;
+            }
+            const result = `${numberString}${modifiedMonth}`;
+
+            var labelm = document.querySelector("label[for='" + result + "']");
+            if (labelm) {
+                labelm.classList.add("clicked");
+                labelm.click();
+            }
+
+
+            function getDayName(year, month, day) {
+                const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const date = new Date(year, month - 1, day); // Month is 0-based in JavaScript dates
+
+                if (isNaN(date.getTime())) {
+                    return "Invalid date.";
+                } else {
+                    return daysOfWeek[date.getDay()];
+                }
+            }
+        });
+
+    </script>
+
+</head>
+
+<body translate="no">
+    <div class="container">
+
+        <div class="calendar-base">
+
+            <div class="year" id="year">2024</div>
+            <!-- year -->
+
+            <div class="triangle-left"></div>
+            <!--triangle -->
+            <div class="triangle-right"></div>
+            <!--  triangle -->
+
+            <div class="months">
+                <button class="btnmonths" onclick="showMonth('january',this,'Jan')" id="Jan">Jan</button>
+                <button class="btnmonths" onclick="showMonth('february',this,'Feb')" id="Feb">Feb</button>
+                <button class="btnmonths" onclick="showMonth('march',this,'Mar')" id="Mar">Mar</button>
+                <button class="btnmonths" onclick="showMonth('april',this,'Apr')" id="Apr">Apr</button>
+                <button class="btnmonths" onclick="showMonth('may',this,'May')" id="May">May</button>
+                <button class="btnmonths" onclick="showMonth('june',this,'Jun')" id="Jun">Jun</button>
+                <button class="btnmonths" onclick="showMonth('july',this,'Jul')" id="Jul">Jul</button>
+                <button class="btnmonths" onclick="showMonth('august',this,'Aug')" id="Aug">Aug</button>
+                <button class="btnmonths" onclick="showMonth('september',this,'Sep')" id="Sep">Sep</button>
+                <button class="btnmonths" onclick="showMonth('october',this,'Oct')" id="Oct">Oct</button>
+                <button class="btnmonths" onclick="showMonth('november',this,'Nov')" id="Nov">Nov</button>
+                <button class="btnmonths" onclick="showMonth('december',this,'Dec')" id="Dec">Dec</button>
+            </div><!-- months -->
+            <hr class="month-line" />
+
+            <div class="days">SUN MON TUE WED THU FRI SAT</div>
+            <!-- days -->
+
+            <div class="num-dates" hidden id="january">
+                <div class="first-week">{{ months_data.january[0] | safe }}</div>
+                <div class="second-week">{{ months_data.january[1] | safe }}</div>
+                <div class="third-week">{{ months_data.january[2] | safe }}</div>
+                <div class="fourth-week">{{ months_data.january[3] | safe }}</div>
+                <div class="fifth-week">{{ months_data.january[4] | safe }}</div>
+                <div class="sixth-week">{{ months_data.january[5] | safe }}</div>
+            </div>
+
+            <div class="num-dates" hidden id="february">
+                <div class="first-week">{{ months_data.february[0] | safe }}</div>
+                <div class="second-week">{{ months_data.february[1] | safe }}</div>
+                <div class="third-week">{{ months_data.february[2] | safe }}</div>
+                <div class="fourth-week">{{ months_data.february[3] | safe }}</div>
+                <div class="fifth-week">{{ months_data.february[4] | safe }}</div>
+                <div class="sixth-week">{{ months_data.february[5] | safe }}</div>
+            </div>
+
+            <div class="num-dates" hidden id="march">
+                <div class="first-week">{{ months_data.march[0] | safe }}</div>
+                <div class="second-week">{{ months_data.march[1] | safe }}</div>
+                <div class="third-week">{{ months_data.march[2] | safe }}</div>
+                <div class="fourth-week">{{ months_data.march[3] | safe }}</div>
+                <div class="fifth-week">{{ months_data.march[4] | safe }}</div>
+                <div class="sixth-week">{{ months_data.march[5] | safe }}</div>
+            </div>
+
+            <div class="num-dates" hidden id="april">
+                <div class="first-week">{{ months_data.april[0] | safe }}</div>
+                <div class="second-week">{{ months_data.april[1] | safe }}</div>
+                <div class="third-week">{{ months_data.april[2] | safe }}</div>
+                <div class="fourth-week">{{ months_data.april[3] | safe }}</div>
+                <div class="fifth-week">{{ months_data.april[4] | safe }}</div>
+                <div class="sixth-week">{{ months_data.april[5] | safe }}</div>
+            </div>
+
+            <div class="num-dates" hidden id="may">
+                <div class="first-week">{{ months_data.may[0] | safe }}</div>
+                <div class="second-week">{{ months_data.may[1] | safe }}</div>
+                <div class="third-week">{{ months_data.may[2] | safe }}</div>
+                <div class="fourth-week">{{ months_data.may[3] | safe }}</div>
+                <div class="fifth-week">{{ months_data.may[4] | safe }}</div>
+                <div class="sixth-week">{{ months_data.may[5] | safe }}</div>
+            </div>
+
+            <div class="num-dates" hidden id="june">
+                <div class="first-week">{{ months_data.june[0] | safe }}</div>
+                <div class="second-week">{{ months_data.june[1] | safe }}</div>
+                <div class="third-week">{{ months_data.june[2] | safe }}</div>
+                <div class="fourth-week">{{ months_data.june[3] | safe }}</div>
+                <div class="fifth-week">{{ months_data.june[4] | safe }}</div>
+                <div class="sixth-week">{{ months_data.june[5] | safe }}</div>
+            </div>
+
+            <div class="num-dates" hidden id="july">
+                <div class="first-week">{{ months_data.july[0] | safe }}</div>
+                <div class="second-week">{{ months_data.july[1] | safe }}</div>
+                <div class="third-week">{{ months_data.july[2] | safe }}</div>
+                <div class="fourth-week">{{ months_data.july[3] | safe }}</div>
+                <div class="fifth-week">{{ months_data.july[4] | safe }}</div>
+                <div class="sixth-week">{{ months_data.july[5] | safe }}</div>
+            </div>
+
+            <div class="num-dates" hidden id="august">
+                <div class="first-week">{{ months_data.august[0] | safe }}</div>
+                <div class="second-week">{{ months_data.august[1] | safe }}</div>
+                <div class="third-week">{{ months_data.august[2] | safe }}</div>
+                <div class="fourth-week">{{ months_data.august[3] | safe }}</div>
+                <div class="fifth-week">{{ months_data.august[4] | safe }}</div>
+                <div class="sixth-week">{{ months_data.august[5] | safe }}</div>
+            </div>
+
+            <div class="num-dates" hidden id="september">
+                <div class="first-week">{{ months_data.september[0] | safe }}</div>
+                <div class="second-week">{{ months_data.september[1] | safe }}</div>
+                <div class="third-week">{{ months_data.september[2] | safe }}</div>
+                <div class="fourth-week">{{ months_data.september[3] | safe }}</div>
+                <div class="fifth-week">{{ months_data.september[4] | safe }}</div>
+                <div class="sixth-week">{{ months_data.september[5] | safe }}</div>
+            </div>
+
+            <div class="num-dates" hidden id="october">
+                <div class="first-week">{{ months_data.october[0] | safe }}</div>
+                <div class="second-week">{{ months_data.october[1] | safe }}</div>
+                <div class="third-week">{{ months_data.october[2] | safe }}</div>
+                <div class="fourth-week">{{ months_data.october[3] | safe }}</div>
+                <div class="fifth-week">{{ months_data.october[4] | safe }}</div>
+                <div class="sixth-week">{{ months_data.october[5] | safe }}</div>
+            </div>
+
+            <div class="num-dates" hidden id="november">
+                <div class="first-week">{{ months_data.november[0] | safe }}</div>
+                <div class="second-week">{{ months_data.november[1] | safe }}</div>
+                <div class="third-week">{{ months_data.november[2] | safe }}</div>
+                <div class="fourth-week">{{ months_data.november[3] | safe }}</div>
+                <div class="fifth-week">{{ months_data.november[4] | safe }}</div>
+                <div class="sixth-week">{{ months_data.november[5] | safe }}</div>
+            </div>
+
+            <div class="num-dates" hidden id="december">
+                <div class="first-week">{{ months_data.december[0] | safe }}</div>
+                <div class="second-week">{{ months_data.december[1] | safe }}</div>
+                <div class="third-week">{{ months_data.december[2] | safe }}</div>
+                <div class="fourth-week">{{ months_data.december[3] | safe }}</div>
+                <div class="fifth-week">{{ months_data.december[4] | safe }}</div>
+                <div class="sixth-week">{{ months_data.december[5] | safe }}</div>
+            </div>
+
+        </div>
+        <!-- calendar-base -->
+        <div class="calendar-left">
+
+            <div class="num-date"><span id="smallMonth">29</span> <span id="bigMonth">Jan</span></div>
+            <!--num-date -->
+            <div class="day" id="dayName">THURSDAY</div>
+            <!--day -->
+
+        </div>
+        <!-- calendar-left -->
+    </div>
+    <!-- container -->
+
+</body>
+
+</html>
